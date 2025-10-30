@@ -202,20 +202,27 @@ const Home = () => {
         )}
 
         {/* Search and Filter Section */}
-        <section className="bg-gray-800/50 backdrop-blur-sm sticky top-16 z-40 py-4 md:py-6 border-b border-gray-700">
+        <section className="bg-gray-800/50 backdrop-blur-sm sticky top-16 z-40 py-3 border-b border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row gap-4 md:gap-6 items-stretch lg:items-center justify-between">
+            <div className="flex flex-col xs:flex-row gap-3 items-stretch justify-between">
+              {/* Search Bar - Full width on mobile, flexible on larger screens */}
               <div className="flex-1 w-full min-w-0">
                 <SearchBar onSearch={handleSearch} />
               </div>
-              <div className="flex items-center gap-3 justify-between lg:justify-start">
-                <span className="text-gray-400 text-sm font-medium whitespace-nowrap">
+
+              {/* Filter Section - Compact on mobile */}
+              <div className="flex items-center gap-2 justify-between xs:justify-end">
+                {/* Hide "Filter by" text on very small screens, show on xs and up */}
+                <span className="hidden xs:inline-block text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap mr-2">
                   Filter by:
                 </span>
-                <div className="flex-1 lg:flex-none">
+
+                {/* Filter dropdown - compact version */}
+                <div className="w-32 sm:w-40 md:w-48">
                   <TopicFilter
                     selectedTopic={selectedTopic}
                     onTopicChange={handleTopicChange}
+                    compact
                   />
                 </div>
               </div>
