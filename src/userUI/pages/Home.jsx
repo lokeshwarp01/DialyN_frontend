@@ -7,6 +7,7 @@ import TopicFilter from "../components/TopicFilter";
 import SearchBar from "../components/SearchBar";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Modern Home Page Component
@@ -21,7 +22,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [featuredNews, setFeaturedNews] = useState(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
+  const navigate = useNavigate();
   // Fetch all news on component mount
   useEffect(() => {
     fetchNews();
@@ -203,10 +204,10 @@ const Home = () => {
 
                   {/* Image Section - Updated with actual image handling */}
                   <div className="w-full lg:w-80 xl:w-96 h-48 sm:h-56 md:h-64 lg:h-72 rounded-lg md:rounded-xl overflow-hidden flex-shrink-0 mt-4 lg:mt-0">
-                    {featuredNews.imageUrl ? (
+                    {featuredNews.image.url ? (
                       // If image URL exists in the news data
                       <img
-                        src={featuredNews.imageUrl}
+                        src={featuredNews.image.url}
                         alt={featuredNews.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
@@ -251,7 +252,10 @@ const Home = () => {
 
                 {/* Read More Button */}
                 <div className="flex justify-end mt-4 md:mt-6">
-                  <button className="flex items-center gap-2 text-purple-400 hover:text-purple-300 font-medium text-sm md:text-base group/btn">
+                  <button
+                    onClick={() => navigate(`/news/${featuredNews._id}`)}
+                    className="flex items-center gap-2 text-purple-400 hover:text-purple-300 font-medium text-sm md:text-base group/btn"
+                  >
                     <span>Read Full Story</span>
                     <svg
                       className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"
@@ -402,50 +406,6 @@ const Home = () => {
                                 >
                                   {topic}
                                 </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Sort Options */}
-                          <div className="space-y-3">
-                            <label className="text-white font-medium text-sm flex items-center gap-2">
-                              <svg
-                                className="w-4 h-4 text-blue-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"
-                                />
-                              </svg>
-                              Sort By
-                            </label>
-                            <div className="space-y-2">
-                              {[
-                                { value: "newest", label: "Newest First" },
-                                { value: "oldest", label: "Oldest First" },
-                                { value: "popular", label: "Most Popular" },
-                              ].map((sortOption) => (
-                                <label
-                                  key={sortOption.value}
-                                  className="flex items-center gap-3 text-gray-300 hover:text-white cursor-pointer group"
-                                >
-                                  <input
-                                    type="radio"
-                                    name="sort"
-                                    value={sortOption.value}
-                                    checked={sortOption.value === "newest"}
-                                    onChange={() => {}}
-                                    className="text-purple-600 focus:ring-purple-500"
-                                  />
-                                  <span className="text-sm group-hover:text-white">
-                                    {sortOption.label}
-                                  </span>
-                                </label>
                               ))}
                             </div>
                           </div>
