@@ -202,30 +202,92 @@ const Home = () => {
         )}
 
         {/* Search and Filter Section */}
-        <section className="bg-gray-800/50 backdrop-blur-sm sticky top-16 z-40 py-3 border-b border-gray-700">
+        <section className="bg-gray-800/50 backdrop-blur-sm sticky top-16 z-40 py-4 border-b border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col xs:flex-row gap-3 items-stretch justify-between">
-              {/* Search Bar - Full width on mobile, flexible on larger screens */}
-              <div className="flex-1 w-full min-w-0">
-                <SearchBar onSearch={handleSearch} />
-              </div>
-
-              {/* Filter Section - Compact on mobile */}
-              <div className="flex items-center gap-2 justify-between xs:justify-end">
-                {/* Hide "Filter by" text on very small screens, show on xs and up */}
-                <span className="hidden xs:inline-block text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap mr-2">
-                  Filter by:
-                </span>
-
-                {/* Filter dropdown - compact version */}
-                <div className="w-32 sm:w-40 md:w-48">
-                  <TopicFilter
-                    selectedTopic={selectedTopic}
-                    onTopicChange={handleTopicChange}
-                    compact
-                  />
+            <div className="flex flex-col gap-4">
+              {/* Mobile Header - Only shows on small screens */}
+              <div className="flex items-center justify-between lg:hidden">
+                <h3 className="text-white font-medium text-sm">Filter News</h3>
+                <div className="text-gray-400 text-xs">
+                  {filteredNews.length}{" "}
+                  {filteredNews.length === 1 ? "result" : "results"}
                 </div>
               </div>
+
+              {/* Main Controls */}
+              <div className="flex flex-col xs:flex-row gap-3 items-stretch">
+                {/* Search Bar - Full width */}
+                <div className="flex-1 min-w-0">
+                  <div className="relative">
+                    <SearchBar onSearch={handleSearch} />
+                  </div>
+                </div>
+
+                {/* Filter Section */}
+                <div className="flex items-center gap-3 justify-between xs:justify-end">
+                  {/* Filter label - hidden on mobile, shown on medium+ */}
+                  <span className="hidden md:inline-block text-gray-400 text-sm font-medium whitespace-nowrap">
+                    Filter by:
+                  </span>
+
+                  {/* Filter dropdown */}
+                  <div className="w-full xs:w-36 sm:w-40 md:w-48">
+                    <TopicFilter
+                      selectedTopic={selectedTopic}
+                      onTopicChange={handleTopicChange}
+                      compact={true}
+                    />
+                  </div>
+
+                  {/* Clear filters button - appears when filters are active */}
+                  {(selectedTopic !== "All" || searchQuery) && (
+                    <button
+                      onClick={() => {
+                        setSelectedTopic("All");
+                        setSearchQuery("");
+                      }}
+                      className="hidden sm:flex items-center gap-1 text-gray-400 hover:text-white text-xs px-2 py-1 rounded border border-gray-600 hover:border-gray-400 transition-colors"
+                      title="Clear all filters"
+                    >
+                      <span>Clear</span>
+                      <span className="text-lg">×</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Active Filters Bar - Shows current filters */}
+              {(selectedTopic !== "All" || searchQuery) && (
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-600/50">
+                  <span className="text-gray-400 text-xs font-medium">
+                    Active filters:
+                  </span>
+
+                  {selectedTopic !== "All" && (
+                    <div className="flex items-center gap-1 bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full text-xs">
+                      <span>Topic: {selectedTopic}</span>
+                      <button
+                        onClick={() => setSelectedTopic("All")}
+                        className="hover:text-white ml-1"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+
+                  {searchQuery && (
+                    <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full text-xs">
+                      <span>Search: "{searchQuery}"</span>
+                      <button
+                        onClick={() => setSearchQuery("")}
+                        className="hover:text-white ml-1"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </section>
