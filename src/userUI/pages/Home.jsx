@@ -176,13 +176,13 @@ const Home = () => {
                 </h2>
               </div>
 
-              <div className="bg-gray-900 rounded-xl md:rounded-2xl p-4 md:p-6 border border-gray-700 hover:border-purple-500 transition-all duration-300">
+              <div className="bg-gray-900 rounded-xl md:rounded-2xl p-4 md:p-6 border border-gray-700 hover:border-purple-500 transition-all duration-300 group cursor-pointer">
                 <div className="flex flex-col lg:flex-row gap-4 md:gap-6 items-start">
                   <div className="flex-1 w-full">
                     <span className="inline-block bg-purple-500/20 text-purple-300 px-2 py-1 md:px-3 md:py-1 rounded-full text-xs md:text-sm font-medium mb-3 md:mb-4">
                       {featuredNews.topic}
                     </span>
-                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 md:mb-4 leading-tight">
+                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 md:mb-4 leading-tight group-hover:text-purple-400 transition-colors">
                       {featuredNews.title}
                     </h3>
                     <p className="text-gray-300 text-sm md:text-base lg:text-lg mb-4 md:mb-6 line-clamp-3">
@@ -200,14 +200,73 @@ const Home = () => {
                       <span>5 min read</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-80 xl:w-96 h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-br from-purple-500/20 to-gray-800 rounded-lg md:rounded-xl flex items-center justify-center mt-4 lg:mt-0">
-                    <div className="text-gray-400 text-center">
-                      <div className="text-2xl sm:text-3xl md:text-4xl mb-1 md:mb-2">
-                        📰
+
+                  {/* Image Section - Updated with actual image handling */}
+                  <div className="w-full lg:w-80 xl:w-96 h-48 sm:h-56 md:h-64 lg:h-72 rounded-lg md:rounded-xl overflow-hidden flex-shrink-0 mt-4 lg:mt-0">
+                    {featuredNews.imageUrl ? (
+                      // If image URL exists in the news data
+                      <img
+                        src={featuredNews.imageUrl}
+                        alt={featuredNews.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          // Fallback if image fails to load
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
+                    ) : null}
+
+                    {/* Fallback when no image or image fails to load */}
+                    <div
+                      className={`w-full h-full bg-gradient-to-br from-purple-500/20 to-gray-800 flex items-center justify-center ${
+                        featuredNews.imageUrl ? "hidden" : "flex"
+                      }`}
+                    >
+                      <div className="text-gray-400 text-center">
+                        <div className="text-2xl sm:text-3xl md:text-4xl mb-1 md:mb-2">
+                          {featuredNews.topic === "Technology"
+                            ? "💻"
+                            : featuredNews.topic === "Sports"
+                            ? "⚽"
+                            : featuredNews.topic === "Politics"
+                            ? "🏛️"
+                            : featuredNews.topic === "Entertainment"
+                            ? "🎬"
+                            : featuredNews.topic === "Business"
+                            ? "💼"
+                            : featuredNews.topic === "Health"
+                            ? "🏥"
+                            : "📰"}
+                        </div>
+                        <div className="text-xs md:text-sm">
+                          {featuredNews.imageUrl
+                            ? "Image not available"
+                            : "Featured Story"}
+                        </div>
                       </div>
-                      <div className="text-xs md:text-sm">Featured Image</div>
                     </div>
                   </div>
+                </div>
+
+                {/* Read More Button */}
+                <div className="flex justify-end mt-4 md:mt-6">
+                  <button className="flex items-center gap-2 text-purple-400 hover:text-purple-300 font-medium text-sm md:text-base group/btn">
+                    <span>Read Full Story</span>
+                    <svg
+                      className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
