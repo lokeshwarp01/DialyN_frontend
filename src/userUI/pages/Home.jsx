@@ -20,6 +20,7 @@ const Home = () => {
   const [selectedTopic, setSelectedTopic] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [featuredNews, setFeaturedNews] = useState(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Fetch all news on component mount
   useEffect(() => {
@@ -37,6 +38,18 @@ const Home = () => {
       setFeaturedNews(news[0]); // First news item as featured
     }
   }, [news]);
+
+  // Close dropdown when clicking outside (for desktop)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isFilterOpen && !event.target.closest(".filter-dropdown")) {
+        setIsFilterOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isFilterOpen]);
 
   const fetchNews = async () => {
     try {
@@ -201,74 +214,235 @@ const Home = () => {
           </section>
         )}
 
-        {/* Search and Filter Section */}
+        {/* Search and Filter Section with Dropdown */}
         <section className="bg-gray-800/50 backdrop-blur-sm sticky top-16 z-40 py-4 border-b border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col gap-4">
-              {/* Mobile Header - Only shows on small screens */}
-              <div className="flex items-center justify-between lg:hidden">
-                <h3 className="text-white font-medium text-sm">Filter News</h3>
-                <div className="text-gray-400 text-xs">
-                  {filteredNews.length}{" "}
-                  {filteredNews.length === 1 ? "result" : "results"}
-                </div>
-              </div>
-
-              {/* Main Controls */}
-              <div className="flex flex-col xs:flex-row gap-3 items-stretch">
-                {/* Search Bar - Full width */}
+              {/* Main Controls Row */}
+              <div className="flex items-center gap-3">
+                {/* Search Bar */}
                 <div className="flex-1 min-w-0">
-                  <div className="relative">
-                    <SearchBar onSearch={handleSearch} />
-                  </div>
+                  <SearchBar onSearch={handleSearch} />
                 </div>
 
-                {/* Filter Section */}
-                <div className="flex items-center gap-3 justify-between xs:justify-end">
-                  {/* Filter label - hidden on mobile, shown on medium+ */}
-                  <span className="hidden md:inline-block text-gray-400 text-sm font-medium whitespace-nowrap">
-                    Filter by:
-                  </span>
-
-                  {/* Filter dropdown */}
-                  <div className="w-full xs:w-36 sm:w-40 md:w-48">
-                    <TopicFilter
-                      selectedTopic={selectedTopic}
-                      onTopicChange={handleTopicChange}
-                      compact={true}
-                    />
-                  </div>
-
-                  {/* Clear filters button - appears when filters are active */}
-                  {(selectedTopic !== "All" || searchQuery) && (
-                    <button
-                      onClick={() => {
-                        setSelectedTopic("All");
-                        setSearchQuery("");
-                      }}
-                      className="hidden sm:flex items-center gap-1 text-gray-400 hover:text-white text-xs px-2 py-1 rounded border border-gray-600 hover:border-gray-400 transition-colors"
-                      title="Clear all filters"
+                {/* Dropdown Trigger Button */}
+                <div className="relative filter-dropdown">
+                  <button
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg text-white transition-all duration-200 min-w-[80px] justify-center"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      <span>Clear</span>
-                      <span className="text-lg">×</span>
-                    </button>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                      />
+                    </svg>
+                    <span className="hidden xs:inline text-sm">Filters</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform ${
+                        isFilterOpen ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isFilterOpen && (
+                    <>
+                      {/* Backdrop */}
+                      <div
+                        className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+                        onClick={() => setIsFilterOpen(false)}
+                      />
+
+                      {/* Dropdown Content */}
+                      <div className="absolute right-0 top-full mt-2 w-80 bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 max-h-[80vh] overflow-hidden">
+                        {/* Mobile Header */}
+                        <div className="flex items-center justify-between p-4 border-b border-gray-700 md:hidden">
+                          <h3 className="text-white font-semibold">Filters</h3>
+                          <button
+                            onClick={() => setIsFilterOpen(false)}
+                            className="text-gray-400 hover:text-white p-1"
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+
+                        {/* Filter Content */}
+                        <div className="p-4 space-y-6">
+                          {/* Topic Filter */}
+                          <div className="space-y-3">
+                            <label className="text-white font-medium text-sm flex items-center gap-2">
+                              <svg
+                                className="w-4 h-4 text-purple-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                />
+                              </svg>
+                              Category
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {[
+                                "All",
+                                "Politics",
+                                "Technology",
+                                "Sports",
+                                "Entertainment",
+                                "Business",
+                                "Health",
+                              ].map((topic) => (
+                                <button
+                                  key={topic}
+                                  onClick={() => {
+                                    setSelectedTopic(topic);
+                                    // Auto-close on mobile after selection
+                                    if (window.innerWidth < 768) {
+                                      setIsFilterOpen(false);
+                                    }
+                                  }}
+                                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    selectedTopic === topic
+                                      ? "bg-purple-600 text-white shadow-lg"
+                                      : "bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white"
+                                  }`}
+                                >
+                                  {topic}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Sort Options */}
+                          <div className="space-y-3">
+                            <label className="text-white font-medium text-sm flex items-center gap-2">
+                              <svg
+                                className="w-4 h-4 text-blue-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"
+                                />
+                              </svg>
+                              Sort By
+                            </label>
+                            <div className="space-y-2">
+                              {[
+                                { value: "newest", label: "Newest First" },
+                                { value: "oldest", label: "Oldest First" },
+                                { value: "popular", label: "Most Popular" },
+                              ].map((sortOption) => (
+                                <label
+                                  key={sortOption.value}
+                                  className="flex items-center gap-3 text-gray-300 hover:text-white cursor-pointer group"
+                                >
+                                  <input
+                                    type="radio"
+                                    name="sort"
+                                    value={sortOption.value}
+                                    checked={sortOption.value === "newest"}
+                                    onChange={() => {}}
+                                    className="text-purple-600 focus:ring-purple-500"
+                                  />
+                                  <span className="text-sm group-hover:text-white">
+                                    {sortOption.label}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Quick Actions */}
+                          <div className="space-y-3">
+                            <label className="text-white font-medium text-sm">
+                              Quick Actions
+                            </label>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  setSelectedTopic("All");
+                                  setSearchQuery("");
+                                  setIsFilterOpen(false);
+                                }}
+                                className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm font-medium transition-colors"
+                              >
+                                Clear All
+                              </button>
+                              <button
+                                onClick={() => setIsFilterOpen(false)}
+                                className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
+                              >
+                                Apply
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Results Summary */}
+                        <div className="bg-gray-900 px-4 py-3 border-t border-gray-700">
+                          <div className="text-center text-gray-400 text-sm">
+                            Showing {filteredNews.length} of {news.length}{" "}
+                            articles
+                          </div>
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>
 
-              {/* Active Filters Bar - Shows current filters */}
+              {/* Active Filters Bar */}
               {(selectedTopic !== "All" || searchQuery) && (
-                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-600/50">
+                <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-gray-600/50">
                   <span className="text-gray-400 text-xs font-medium">
-                    Active filters:
+                    Active:
                   </span>
 
                   {selectedTopic !== "All" && (
-                    <div className="flex items-center gap-1 bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full text-xs">
-                      <span>Topic: {selectedTopic}</span>
+                    <div className="flex items-center gap-1 bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs">
+                      <span>{selectedTopic}</span>
                       <button
                         onClick={() => setSelectedTopic("All")}
-                        className="hover:text-white ml-1"
+                        className="hover:text-white ml-1 text-sm font-bold"
                       >
                         ×
                       </button>
@@ -276,15 +450,27 @@ const Home = () => {
                   )}
 
                   {searchQuery && (
-                    <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full text-xs">
-                      <span>Search: "{searchQuery}"</span>
+                    <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs">
+                      <span>"{searchQuery}"</span>
                       <button
                         onClick={() => setSearchQuery("")}
-                        className="hover:text-white ml-1"
+                        className="hover:text-white ml-1 text-sm font-bold"
                       >
                         ×
                       </button>
                     </div>
+                  )}
+
+                  {(selectedTopic !== "All" || searchQuery) && (
+                    <button
+                      onClick={() => {
+                        setSelectedTopic("All");
+                        setSearchQuery("");
+                      }}
+                      className="text-gray-400 hover:text-white text-xs ml-2 underline"
+                    >
+                      Clear all
+                    </button>
                   )}
                 </div>
               )}

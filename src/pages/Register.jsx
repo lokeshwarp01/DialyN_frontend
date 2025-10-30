@@ -94,7 +94,7 @@ const Register = () => {
                 to="/login"
                 className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
               >
-                sign in to existing account
+                Login in to existing account
               </Link>
             </p>
           </div>
@@ -222,7 +222,7 @@ const Register = () => {
                 disabled={loading}
                 className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center"
               >
-                {loading ? <LoadingSpinner size="sm" /> : "Create Account"}
+                {loading ? <LoadingSpinner size="sm" /> : "Register"}
               </button>
             </div>
           </form>
