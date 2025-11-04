@@ -22,11 +22,16 @@ const Navbar = ({ isAdmin = false }) => {
   const handleLogout = () => {
     logout();
     setMobileMenuOpen(false);
-    navigate(isAdmin ? "/admin/login" : "/");
+    navigate(isAdmin ? "/login" : "/login");
   };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  // Close mobile menu when navigating
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
   };
 
   // Admin Navbar
@@ -90,14 +95,14 @@ const Navbar = ({ isAdmin = false }) => {
               <Link
                 to="/admin/dashboard"
                 className="block text-gray-300 hover:text-purple-400 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={closeMobileMenu}
               >
                 Dashboard
               </Link>
               <Link
                 to="/admin/news"
                 className="block text-gray-300 hover:text-purple-400 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={closeMobileMenu}
               >
                 Manage News
               </Link>
@@ -165,10 +170,23 @@ const Navbar = ({ isAdmin = false }) => {
 
             {user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-400">
-                  <FaUser className="inline mr-1" />
-                  {user.name}
-                </span>
+                <Link 
+                  to="/profile" 
+                  className="flex items-center space-x-2 text-gray-300 hover:text-purple-400 transition-colors"
+                >
+                  {user?.profile?.avatar?.url? (
+                    <img 
+                      src={user.profile.avatar.url} 
+                      alt={user.name}
+                      className="w-8 h-8 rounded-full object-cover border-2 border-purple-500"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-sm font-bold">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="hidden sm:block">{user.name}</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-1"
@@ -210,38 +228,52 @@ const Navbar = ({ isAdmin = false }) => {
             <Link
               to="/"
               className="block text-gray-300 hover:text-purple-400 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
             >
               Home
             </Link>
             <Link
               to="/topic/World"
               className="block text-gray-300 hover:text-purple-400 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
             >
               World
             </Link>
             <Link
               to="/topic/Technology"
               className="block text-gray-300 hover:text-purple-400 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
             >
               Technology
             </Link>
             <Link
               to="/topic/Sports"
               className="block text-gray-300 hover:text-purple-400 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
             >
               Sports
             </Link>
 
             {user ? (
               <>
-                <div className="text-gray-400 pt-2 border-t border-gray-700">
-                  <FaUser className="inline mr-1" />
-                  {user.name}
-                </div>
+                <Link 
+                  to="/profile" 
+                  className="flex items-center space-x-3 pt-2 border-t border-gray-700 text-gray-300 hover:text-purple-400 transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  {user.profile?.avatar?.url ? (
+                    <img 
+                      src={user.profile.avatar.url} 
+                      alt={user.name}
+                      className="w-8 h-8 rounded-full object-cover border-2 border-purple-500"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-sm font-bold">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <span>{user.name}</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="bg-purple-600 hover:bg-purple-700 text-white w-full py-2 rounded-lg transition-colors flex items-center justify-center space-x-1"
@@ -255,14 +287,14 @@ const Navbar = ({ isAdmin = false }) => {
                 <Link
                   to="/login"
                   className="bg-gray-800 hover:bg-gray-700 text-white w-full py-2 rounded-lg transition-colors block text-center"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={closeMobileMenu}
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
                   className="bg-purple-600 hover:bg-purple-700 text-white w-full py-2 rounded-lg transition-colors block text-center"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={closeMobileMenu}
                 >
                   Register
                 </Link>
