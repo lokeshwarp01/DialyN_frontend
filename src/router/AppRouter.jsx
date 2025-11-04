@@ -9,7 +9,7 @@ import {
   createRoutesFromElements
 } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "../App.css";
+import "../index.css";
 
 // Pages
 import Home from "../userUI/pages/Home";
